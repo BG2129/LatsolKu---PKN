@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LATSOLKU! - Nippz</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- QRCode.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                        darkbg: '#0b0f19',
+                        darkcard: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(99, 102, 241, 0.25);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.4);
+            border-radius: 9999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(75, 85, 99, 0.5);
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #print-area, #print-area * {
+                visibility: visible;
+            }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                color: #000 !important;
+                background: #fff !important;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-[#0b0f19] dark:text-slate-100 min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-40 w-full glass-card border-b border-slate-200/80 dark:border-slate-800/80 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-lg shadow-brand-500/30">
+                    <i data-lucide="book-marked" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-lg sm:text-xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-indigo-500 to-purple-500 dark:from-indigo-400 dark:to-brand-400">
+                            LATSOLKU!
+                        </h1>
+                        <span class="px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded-full bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300 border border-brand-200 dark:border-brand-700/50">
+                            TKA EDITION
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block">Kumpulan Latihan Soal persiapa TKA</p>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                
+                <!-- Share Button -->
+                <button onclick="openShareModal()" class="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center gap-2 transition-all">
+                    <i data-lucide="qr-code" class="w-4 h-4 text-brand-500"></i>
+                    <span class="hidden sm:inline">Bagikan</span>
+                </button>
+
+                <!-- Unduh Artikel Button -->
+                <!-- <button onclick="openExportModal()" class="p-2 sm:px-3 sm:py-2 text-xs font-semibold rounded-xl bg-brand-600 hover:bg-brand-700 text-white flex items-center gap-2 shadow-md shadow-brand-500/20 transition-all">
+                    <i data-lucide="file-down" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Unduh Soal</span>
+                </button> -->
+
+                <!-- Dark Mode Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-all">
+                    <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-4 h-4 hidden"></i>
+                    <i id="theme-toggle-light-icon" data-lucide="sun" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full flex-grow">
+        
+        <!-- Hero Banner -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-950 via-slate-900 to-brand-950 text-white p-6 sm:p-10 mb-8 border border-slate-800 shadow-2xl">
+            <div class="absolute -top-24 -right-24 w-72 h-72 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10 max-w-2xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium text-brand-200 border border-white/10 mb-4">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 text-yellow-400"></i>
+                    <span>Pendidikan Pancasila dan Kewarganegaraan</span>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight mb-3">
+                    Sumber & Referensi Belajar
+                </h2>
+                <p class="text-sm sm:text-base text-slate-300 font-normal leading-relaxed mb-6">
+                    TKA (Tes Kemampuan Akademik) SMA mencakup mata pelajaran wajib dan mata pelajaran pilihan (Saintek/Soshum) dengan format berbasis HOTS (Higher Order Thinking Skills), literasi, dan numerasi.
+                </p>
+
+                <!-- Quick Stats Badge -->
+                <div class="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-300 pt-2 border-t border-white/10">
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="link" class="w-4 h-4 text-brand-400"></i>
+                        <span id="stat-count">0 Sumber Terverifikasi</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-indigo-400"></i>
+                        <span>Sumber Terverifikasi</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar: Search, Filters & View Toggle -->
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6">
+            
+            <div class="flex flex-1 flex-col sm:flex-row items-center gap-3">
+                <!-- Search Bar -->
+                <div class="relative w-full sm:w-72">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="search-input" placeholder="Cari sumber sejarah..." 
+                        class="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-2xl bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                </div>
+
+                <!-- Category Filters -->
+                <div class="w-full sm:w-auto flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
+                    <button onclick="setFilter('all')" class="filter-btn active px-4 py-2 text-xs font-medium rounded-xl whitespace-nowrap bg-brand-600 text-white shadow-sm transition-all" data-category="all">
+                        Semua
+                    </button>
+                    <button onclick="setFilter('PDF')" class="filter-btn px-4 py-2 text-xs font-medium rounded-xl whitespace-nowrap bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" data-category="PDF">
+                        PDF
+                    </button>
+                    <!-- <button onclick="setFilter('VIDEO')" class="filter-btn px-4 py-2 text-xs font-medium rounded-xl whitespace-nowrap bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" data-category="VIDEO">
+                        VIDEO
+                    </button>
+                    <button onclick="setFilter('Artikel')" class="filter-btn px-4 py-2 text-xs font-medium rounded-xl whitespace-nowrap bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" data-category="Artikel">
+                        Artikel
+                    </button> -->
+                    <button onclick="setFilter('Pembahasan')" class="filter-btn px-4 py-2 text-xs font-medium rounded-xl whitespace-nowrap bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all" data-category="Video">
+                        Pembahasan
+                    </button>
+                </div>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="flex items-center justify-end">
+                <div class="bg-slate-200/80 dark:bg-slate-800 p-1 rounded-2xl flex items-center border border-slate-300/50 dark:border-slate-700">
+                    <button id="view-cards-btn" onclick="switchView('cards')" class="px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all">
+                        <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+                        <span>Kartu</span>
+                    </button>
+                    <button id="view-timeline-btn" onclick="switchView('timeline')" class="px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all">
+                        <i data-lucide="git-commit" class="w-3.5 h-3.5"></i>
+                        <span>Baris</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Link Cards Grid Container -->
+        <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Dynamic Injection -->
+        </div>
+
+        <!-- Interactive Timeline Container -->
+        <div id="timeline-container" class="hidden relative pl-6 sm:pl-8 border-l-2 border-brand-500/30 dark:border-brand-500/20 space-y-8 my-4 ml-2 sm:ml-4">
+            <!-- Dynamic Injection -->
+        </div>
+
+        <!-- Empty State Container -->
+        <div id="empty-state" class="hidden text-center py-16">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+                <i data-lucide="search-x" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-base font-semibold text-slate-700 dark:text-slate-200">Tidak Ada Sumber Ditemukan</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Coba gunakan kata kunci pencarian lain.</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full border-t border-slate-200/80 dark:border-slate-800/80 glass-card py-6 mt-12">
+        <div class="max-w-6xl mx-auto px-4 text-center sm:flex sm:items-center sm:justify-between">
+            <div class="flex items-center justify-center sm:justify-start gap-2 mb-3 sm:mb-0">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <p class="text-xs font-semibold text-slate-600 dark:text-slate-300">
+                    Nippz
+                </p>
+            </div>
+            <p class="text-[11px] text-slate-500 dark:text-slate-400">
+                Dibuat untuk mempermudah siswa dalam belajar dan mempersiapkan TKA 2026.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal Share / QR Code -->
+    <div id="share-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-sm w-full shadow-2xl border border-slate-200 dark:border-slate-800 transform scale-95 transition-all duration-300" id="share-modal-content">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <i data-lucide="share-2" class="w-4 h-4 text-brand-500"></i>
+                    Bagikan Halaman Ini
+                </h3>
+                <button onclick="closeShareModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-100 dark:border-slate-700/50 mb-4">
+                <div id="qrcode" class="p-3 bg-white rounded-xl shadow-md"></div>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-3 text-center">Scan QR Code untuk membuka web ini di HP</p>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <input type="text" id="share-url-input" readonly class="w-full text-xs p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 focus:outline-none">
+                <button onclick="copyShareUrl()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold whitespace-nowrap transition-all">
+                    Salin
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Unduh Artikel / Ringkasan Dokumentasi Sejarah -->
+    <div id="export-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 transform scale-95 transition-all duration-300">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                        <i data-lucide="file-text" class="w-4 h-4 text-brand-500"></i>
+                        Unduh Soal
+                    </h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Daftar latihan soal Bahasa Indonesia</p>
+                </div>
+                <button onclick="closeExportModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Preview Dokumen Artikel -->
+            <div class="my-4 p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/60 overflow-y-auto flex-grow text-sm leading-relaxed text-slate-800 dark:text-slate-200" id="print-area">
+                <div class="text-center font-bold text-base mb-4 border-b pb-3 text-slate-900 dark:text-white border-slate-200 dark:border-slate-700">
+                    DOKUMEN DOKUMENTASI & ARTIKEL SEJARAH
+                    <div class="text-xs font-normal text-slate-500 mt-1">Kelompok Hanif dan Rafid dari kelas XII-F</div>
+                </div>
+                <div id="article-list-preview" class="space-y-4 text-xs sm:text-sm">
+                    <!-- Dynamic Generation -->
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <!-- <button onclick="copyArticleText()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold flex items-center gap-2">
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    <span>Salin Teks Ringkasan</span>
+                </button>
+                <button onclick="downloadTxtFormat()" class="px-4 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-800 dark:text-white text-xs font-semibold flex items-center gap-2">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Unduh File TXT</span>
+                </button> -->
+                <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold flex items-center gap-2 shadow-md shadow-brand-500/20">
+                    <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+                    <span>Cetak Dokumen / PDF</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 text-xs font-semibold border border-slate-700 dark:border-slate-200">
+        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+        <span id="toast-message">Pesan Notifikasi</span>
+    </div>
+
+    <script>
+        // Data Dummy Sumber (Dapat Anda sesuaikan nanti)
+        const historySources = [
+            {
+                id: '1',
+                title: 'Soal TKA PPKN Pilihan 2025',
+                url: 'https://drive.google.com/file/d/1cb-3gowmbBqmG4yWjbtHHExYf8pOE8TA/view?usp=drive_link',
+                author: 'Pendidikan Pancasila dan Kewarganegaraan',
+                year: 2025,
+                category: 'PDF',
+                description: 'Soal TKA Pilihan 2025 PPKN.',
+                domain: 'drive.google.com'
+            },
+            {
+                id: '2',
+                title: 'Prediksi Soal TKA PPKN Pilihan',
+                url: 'https://docs.google.com/document/d/1XBS7GtZE4oAWVbuDT_kT_etQ8MEBDcao/edit?usp=drive_link&ouid=100834121181983776573&rtpof=true&sd=true',
+                author: 'Pendidikan Pancasila dan Kewarganegaraan',
+                year: 2026,
+                category: 'PDF',
+                description: 'Prediksi Soal TKA Pilihan 2026 PPKN.',
+                domain: 'drive.google.com'
+            },
+            
+            // {
+            //     id: '100',
+            //     title: 'Dokumenter Sejarah: Jejak Konferensi Asia Afrika 1955 di Bandung',
+            //     url: 'https://youtube.com/watch?v=sample-kaa-1955',
+            //     author: 'Arsip Museum KAA Bandung',
+            //     year: 1955,
+            //     category: 'Video',
+            //     description: 'Dokumentasi audio-visual pelaksanaan KAA 1955 beserta peran penting Indonesia dalam gerakan non-blok.',
+            //     domain: 'youtube.com'
+            // }
+        ];
+
+        let sources = historySources;
+        let currentFilter = 'all';
+        let currentSearch = '';
+        let currentView = 'cards';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            render();
+            setupSearch();
+            lucide.createIcons();
+            document.getElementById('share-url-input').value = window.location.href;
+        });
+
+        function initTheme() {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const darkIcon = document.getElementById('theme-toggle-dark-icon');
+            const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+            if (localStorage.getItem('color-theme') === 'light') {
+                document.documentElement.classList.remove('dark');
+                lightIcon.classList.add('hidden');
+                darkIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                darkIcon.classList.add('hidden');
+                lightIcon.classList.remove('hidden');
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                darkIcon.classList.toggle('hidden');
+                lightIcon.classList.toggle('hidden');
+
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.toLowerCase().trim();
+                render();
+            });
+        }
+
+        function setFilter(category) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.className = 'filter-btn active px-4 py-2 text-xs font-medium rounded-xl whitespace-nowrap bg-brand-600 text-white shadow-sm transition-all';
+                } else {
+                    btn.className = 'filter-btn px-4 py-2 text-xs font-medium rounded-xl whitespace-nowrap bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all';
+                }
+            });
+            render();
+        }
+
+        function switchView(view) {
+            currentView = view;
+            const cardsBtn = document.getElementById('view-cards-btn');
+            const timelineBtn = document.getElementById('view-timeline-btn');
+            const cardsContainer = document.getElementById('cards-container');
+            const timelineContainer = document.getElementById('timeline-container');
+
+            if (view === 'cards') {
+                cardsBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all';
+                timelineBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all';
+                cardsContainer.classList.remove('hidden');
+                timelineContainer.classList.add('hidden');
+            } else {
+                timelineBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm transition-all';
+                cardsBtn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all';
+                cardsContainer.classList.add('hidden');
+                timelineContainer.classList.remove('hidden');
+            }
+            render();
+        }
+
+        function getFilteredSources() {
+            return sources.filter(item => {
+                const matchesFilter = currentFilter === 'all' || item.category === currentFilter;
+                const matchesSearch = item.title.toLowerCase().includes(currentSearch) ||
+                                     item.author.toLowerCase().includes(currentSearch) ||
+                                     item.description.toLowerCase().includes(currentSearch) ||
+                                     item.domain.toLowerCase().includes(currentSearch);
+                return matchesFilter && matchesSearch;
+            });
+        }
+
+        function render() {
+            const filtered = getFilteredSources();
+            document.getElementById('stat-count').innerText = `${sources.length} Sumber Sejarah`;
+
+            const emptyState = document.getElementById('empty-state');
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            if (currentView === 'cards') {
+                renderCards(filtered);
+            } else {
+                renderTimeline(filtered);
+            }
+
+            lucide.createIcons();
+        }
+
+        function renderCards(data) {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = data.map(item => {
+                const faviconUrl = `https://www.google.com/s2/favicons?domain=${item.domain}&sz=64`;
+
+                return `
+                    <div class="glass-card rounded-3xl p-5 card-hover flex flex-col justify-between relative group">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 mb-3">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <img src="${faviconUrl}" alt="favicon" class="w-5 h-5 rounded-md flex-shrink-0 bg-slate-100 dark:bg-slate-800 p-0.5" onerror="this.src='https://placehold.co/32x32/6366f1/ffffff?text=S'">
+                                    <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 truncate">${item.domain}</span>
+                                </div>
+                                <span class="px-2.5 py-1 text-[10px] font-bold rounded-full ${getCategoryBadgeColor(item.category)}">
+                                    ${item.category}
+                                </span>
+                            </div>
+
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors line-clamp-2 mb-2">
+                                ${item.title}
+                            </h3>
+
+                            <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-3 mb-4 leading-relaxed">
+                                ${item.description}
+                            </p>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between mt-auto">
+                            <div class="text-[11px] text-slate-500 dark:text-slate-400">
+                                <span class="font-medium text-slate-700 dark:text-slate-300">${item.author}</span>
+                                <span class="mx-1">•</span>
+                                <span>${item.year}</span>
+                            </div>
+
+                            <a href="${item.url}" target="_blank" rel="noopener noreferrer" 
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300 hover:bg-brand-600 hover:text-white dark:hover:bg-brand-600 dark:hover:text-white text-xs font-semibold transition-all">
+                                <span>Buka</span>
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderTimeline(data) {
+            const container = document.getElementById('timeline-container');
+            const sorted = [...data].sort((a, b) => a.year - b.year);
+
+            container.innerHTML = sorted.map(item => {
+                const faviconUrl = `https://www.google.com/s2/favicons?domain=${item.domain}&sz=64`;
+
+                return `
+                    <div class="relative group">
+                        <div class="absolute -left-[31px] sm:-left-[39px] top-1.5 w-4 h-4 rounded-full bg-brand-600 border-4 border-slate-50 dark:border-[#0b0f19] group-hover:scale-125 transition-transform"></div>
+
+                        <div class="glass-card rounded-2xl p-4 sm:p-5 card-hover">
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                <span class="px-2.5 py-0.5 text-xs font-extrabold rounded-lg bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
+                                    Tahun ${item.year}
+                                </span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+                                    <img src="${faviconUrl}" class="w-3.5 h-3.5 rounded" onerror="this.src='https://placehold.co/32x32/6366f1/ffffff?text=S'">
+                                    ${item.domain}
+                                </span>
+                            </div>
+
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">
+                                ${item.title}
+                            </h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400 mb-3">
+                                ${item.description}
+                            </p>
+
+                            <div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-200/50 dark:border-slate-800">
+                                <span class="text-slate-500">Penerbit: ${item.author}</span>
+                                <a href="${item.url}" target="_blank" class="text-brand-600 dark:text-brand-400 font-semibold hover:underline flex items-center gap-1">
+                                    Buka Sumber <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getCategoryBadgeColor(category) {
+            switch(category) {
+                case 'Jurnal': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300';
+                case 'Arsip': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300';
+                case 'Video': return 'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300';
+                default: return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300';
+            }
+        }
+
+        // Share Modal Functions
+        function openShareModal() {
+            const modal = document.getElementById('share-modal');
+            const modalContent = document.getElementById('share-modal-content');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('scale-95');
+
+            const qrcodeContainer = document.getElementById('qrcode');
+            qrcodeContainer.innerHTML = ''; 
+            new QRCode(qrcodeContainer, {
+                text: window.location.href,
+                width: 140,
+                height: 140,
+                colorDark : "#312e81",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        }
+
+        function closeShareModal() {
+            const modal = document.getElementById('share-modal');
+            const modalContent = document.getElementById('share-modal-content');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.add('scale-95');
+        }
+
+        function copyShareUrl() {
+            const copyText = document.getElementById('share-url-input');
+            copyText.select();
+            document.execCommand('copy');
+            showToast('Link berhasil disalin ke clipboard!');
+        }
+
+        // Export Modal Functions (Unduh Artikel)
+        function openExportModal() {
+            const modal = document.getElementById('export-modal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+
+            const articleList = document.getElementById('article-list-preview');
+            articleList.innerHTML = sources.map((item, idx) => {
+                return `
+                    <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <div class="font-bold text-slate-900 dark:text-white mb-1">
+                            ${idx + 1}. ${item.title} (${item.year})
+                        </div>
+                        <div class="text-slate-600 dark:text-slate-300 mb-1">
+                            <strong>Sumber/Penerbit:</strong> ${item.author} | <strong>Kategori:</strong> ${item.category}
+                        </div>
+                        <div class="text-slate-500 dark:text-slate-400 mb-1">
+                            <strong>Deskripsi:</strong> ${item.description}
+                        </div>
+                        <div class="text-brand-600 dark:text-brand-400 font-mono text-[11px]">
+                            URL: ${item.url}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function closeExportModal() {
+            const modal = document.getElementById('export-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function copyArticleText() {
+            const textToCopy = `DOKUMEN DOKUMENTASI & ARTIKEL SEJARAH\nKelompok Hanif dan Rafid dari kelas XII-F\n\n` +
+            sources.map((item, idx) => 
+                `${idx + 1}. ${item.title} (${item.year})\nPenerbit: ${item.author}\nKategori: ${item.category}\nDeskripsi: ${item.description}\nLink: ${item.url}`
+            ).join('\n\n-----------------------------------\n\n');
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = textToCopy;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showToast('Teks artikel & rujukan berhasil disalin!');
+        }
+
+        function downloadTxtFormat() {
+            const textToDownload = `DOKUMEN ARTIKEL & REFERENSI SEJARAH\nKelompok Hanif dan Rafid dari kelas XII-F\n===============================================\n\n` + 
+            sources.map((item, idx) => 
+                `[${idx + 1}] ${item.title} (${item.year})\n- Penerbit: ${item.author}\n- Kategori: ${item.category}\n- Deskripsi: ${item.description}\n- Link URL: ${item.url}\n`
+            ).join('\n-----------------------------------------------\n');
+
+            const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Artikel_Referensi_Sejarah_XII-F.txt';
+            link.click();
+            showToast('File TXT berhasil diunduh!');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
